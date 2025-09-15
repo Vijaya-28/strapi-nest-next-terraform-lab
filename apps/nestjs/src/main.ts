@@ -1,0 +1,1 @@
+console.log('NestJS app');
