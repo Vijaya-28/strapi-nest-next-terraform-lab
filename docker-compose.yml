@@ -1,46 +1,46 @@
+version: "3.9"
+
 services:
   postgres:
     image: postgres:15-alpine
     container_name: strapi-postgres
-    restart: unless-stopped
+    restart: always
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_USER: strapi
       POSTGRES_PASSWORD: strapi
-      POSTGRES_DB: strapi
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: strapidb
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   strapi:
-    build: ./strapi
-    container_name: strapi
-    restart: unless-stopped
+    build: ./apps/strapi
+    container_name: strapi-app
     depends_on:
       - postgres
+    ports:
+      - "1337:1337"
     environment:
       DATABASE_CLIENT: postgres
       DATABASE_HOST: postgres
       DATABASE_PORT: 5432
-      DATABASE_NAME: strapi
+      DATABASE_NAME: strapidb
       DATABASE_USERNAME: strapi
       DATABASE_PASSWORD: strapi
-    ports:
-      - "1337:1337"
+      NODE_ENV: development
 
   nest:
-    build: ./nest
-    container_name: nest
-    restart: unless-stopped
+    build: ./apps/nestjs
+    container_name: nest-api
     depends_on:
       - strapi
     ports:
       - "3001:3001"
 
   next:
-    build: ./next
-    container_name: next
-    restart: unless-stopped
+    build: ./apps/nextjs
+    container_name: next-frontend
     depends_on:
       - nest
     ports:
