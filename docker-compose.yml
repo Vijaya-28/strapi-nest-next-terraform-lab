@@ -2,15 +2,45 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: strapi-postgres
-    restart: unless-stopped
     environment:
       POSTGRES_USER: strapi
-      POSTGRES_PASSWORD: strapi   # ✅ THIS MUST BE HERE
+      POSTGRES_PASSWORD: strapi
       POSTGRES_DB: strapi
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  strapi:
+    build: ./strapi
+    container_name: strapi
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: strapi
+      DATABASE_USERNAME: strapi
+      DATABASE_PASSWORD: strapi
+    ports:
+      - "1337:1337"
+
+  nest:
+    build: ./nest
+    container_name: nest
+    depends_on:
+      - strapi
+    ports:
+      - "3001:3001"
+
+  next:
+    build: ./next
+    container_name: next
+    depends_on:
+      - nest
+    ports:
+      - "3000:3000"
 
 volumes:
   postgres_data:
