@@ -2,6 +2,7 @@ services:
   postgres:
     image: postgres:15-alpine
     container_name: strapi-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_USER: strapi
       POSTGRES_PASSWORD: strapi
@@ -14,6 +15,7 @@ services:
   strapi:
     build: ./strapi
     container_name: strapi
+    restart: unless-stopped
     depends_on:
       - postgres
     environment:
@@ -29,6 +31,7 @@ services:
   nest:
     build: ./nest
     container_name: nest
+    restart: unless-stopped
     depends_on:
       - strapi
     ports:
@@ -37,6 +40,7 @@ services:
   next:
     build: ./next
     container_name: next
+    restart: unless-stopped
     depends_on:
       - nest
     ports:
